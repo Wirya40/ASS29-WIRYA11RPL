@@ -1,4 +1,6 @@
 import { Geist, Geist_Mono } from "next/font/google";
+import "antd/dist/reset.css";
+
 import "./globals.css";
 
 const geistSans = Geist({
