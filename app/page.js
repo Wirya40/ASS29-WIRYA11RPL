@@ -18,7 +18,7 @@ export default function HomePage() {
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
 
-  // FASHION + MAKEUP / BEAUTY categories
+  
   const fashionBeautyCategories = [
     "beauty",
     "fragrances",
@@ -38,7 +38,7 @@ export default function HomePage() {
   useEffect(() => {
     async function load() {
       try {
-        // IMPORTANT: increase limit or fashion items don't show
+       
         const res = await fetch(
           "https://dummyjson.com/products?sort=price&limit=200"
         );
@@ -47,7 +47,7 @@ export default function HomePage() {
 
         const data = await res.json();
 
-        // Filter fashion + makeup products
+       
         const filtered = data.products.filter((item) =>
           fashionBeautyCategories.includes(item.category)
         );
