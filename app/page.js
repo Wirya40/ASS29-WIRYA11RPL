@@ -1,156 +1,156 @@
 "use client";
-import React, { useEffect, useState } from "react";
-import { ConfigProvider, Card, Row, Col, Typography, Spin, Tag, Button } from "antd";
-import { ShoppingOutlined, ShoppingCartOutlined, StarFilled } from "@ant-design/icons";
 
-const { Title, Text, Paragraph } = Typography;
+import React, { useEffect, useState } from "react";
+import {
+  ConfigProvider,
+  Card,
+  Row,
+  Col,
+  Spin,
+  Typography,
+  Tag,
+  message,
+} from "antd";
+
+const { Title, Paragraph } = Typography;
 
 export default function HomePage() {
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
 
+  // FASHION + MAKEUP / BEAUTY categories
+  const fashionBeautyCategories = [
+    "beauty",
+    "fragrances",
+    "skin-care",
+    "mens-shirts",
+    "mens-shoes",
+    "mens-watches",
+    "tops",
+    "womens-dresses",
+    "womens-shoes",
+    "womens-bags",
+    "womens-jewellery",
+    "womens-watches",
+    "sunglasses",
+  ];
+
   useEffect(() => {
-    const fetchData = async () => {
+    async function load() {
       try {
-        const res = await fetch("https://dummyjson.com/products?limit=12&sort=desc");
+        // IMPORTANT: increase limit or fashion items don't show
+        const res = await fetch(
+          "https://dummyjson.com/products?sort=price&limit=200"
+        );
+
+        if (!res.ok) throw new Error("API failed");
+
         const data = await res.json();
-        setProducts(data.products);
+
+        // Filter fashion + makeup products
+        const filtered = data.products.filter((item) =>
+          fashionBeautyCategories.includes(item.category)
+        );
+
+        setProducts(filtered);
       } catch (err) {
-        console.error("Gagal fetch data:", err);
+        console.error(err);
+        message.error("Error fetching products!");
       } finally {
         setLoading(false);
       }
-    };
-    fetchData();
+    }
+
+    load();
   }, []);
 
-  const customTheme = {
-    token: {
-      colorPrimary: "#ff6b00",
-      borderRadius: 14,
-      fontSize: 16,
-      colorBgContainer: "#fffaf5",
-    },
-  };
-
   return (
-    <ConfigProvider theme={customTheme}>
+    <ConfigProvider
+      theme={{
+        token: {
+          colorPrimary: "#4C72FF",
+          borderRadius: 12,
+          fontSize: 15,
+        },
+      }}
+    >
       <div
         style={{
-          background: "linear-gradient(135deg, #fff5ec 0%, #fffaf5 100%)",
           minHeight: "100vh",
-          padding: "60px 40px",
+          background: "linear-gradient(135deg, #eef2ff, #ffffff)",
+          padding: "40px 70px",
         }}
       >
-        <div style={{ textAlign: "center", marginBottom: 50 }}>
-          <Title
-            level={2}
-            style={{
-              fontWeight: 700,
-              fontSize: 36,
-              color: "#ff6b00",
-              textShadow: "1px 1px 3px rgba(0,0,0,0.1)",
-            }}
-          >
-            <ShoppingOutlined /> Koleksi Produk Terbaru
-          </Title>
-          <Paragraph style={{ color: "#666", fontSize: 18 }}>
-            Temukan produk populer dengan harga terbaik hari ini!
-          </Paragraph>
-        </div>
+        <Title
+          level={1}
+          style={{
+            textAlign: "center",
+            marginBottom: 10,
+            fontWeight: 800,
+            background: "linear-gradient(to right, #4C72FF, #7F9BFF)",
+            WebkitBackgroundClip: "text",
+            color: "transparent",
+          }}
+        >
+          Fashion & Beauty Collection
+        </Title>
 
-        {loading ? (
-          <div style={{ textAlign: "center", padding: "100px 0" }}>
+        <Paragraph
+          style={{
+            textAlign: "center",
+            color: "#666",
+            marginBottom: 40,
+          }}
+        >
+          Fashion + Makeup products fetched using the DummyJSON Sort API.
+        </Paragraph>
+
+        {loading && (
+          <div style={{ display: "flex", justifyContent: "center", marginTop: 100 }}>
             <Spin size="large" />
-            <p style={{ color: "#999", marginTop: 10 }}>Memuat data produk...</p>
           </div>
-        ) : (
-          <Row gutter={[32, 32]} justify="center">
-            {products.map((item) => (
-              <Col xs={24} sm={12} md={8} lg={6} key={item.id}>
+        )}
+
+        <Row gutter={[24, 24]} justify="center">
+          {!loading &&
+            products.map((item) => (
+              <Col key={item.id} xs={24} sm={12} md={8} lg={6}>
                 <Card
                   hoverable
-                  variant="borderless" // ✅ menggantikan bordered={false}
-                  cover={
-                    <div style={{ position: "relative" }}>
-                      <img
-                        alt={item.title}
-                        src={item.thumbnail}
-                        style={{
-                          height: 220,
-                          width: "100%",
-                          objectFit: "cover",
-                          borderTopLeftRadius: 14,
-                          borderTopRightRadius: 14,
-                          transition: "transform 0.3s ease",
-                        }}
-                        onMouseOver={(e) => (e.currentTarget.style.transform = "scale(1.05)")}
-                        onMouseOut={(e) => (e.currentTarget.style.transform = "scale(1)")}
-                      />
-                      <Tag
-                        color="orange"
-                        style={{
-                          position: "absolute",
-                          top: 12,
-                          right: 12,
-                          fontWeight: 600,
-                        }}
-                      >
-                        {item.category.toUpperCase()}
-                      </Tag>
-                    </div>
-                  }
                   style={{
-                    borderRadius: 14,
-                    overflow: "hidden",
-                    boxShadow: "0 8px 20px rgba(0,0,0,0.08)",
-                    transition: "transform 0.25s ease, box-shadow 0.25s ease",
+                    borderRadius: 12,
+                    boxShadow:
+                      "0 6px 18px rgba(0,0,0,0.05), 0 2px 6px rgba(0,0,0,0.03)",
                   }}
-                  onMouseEnter={(e) => {
-                    e.currentTarget.style.transform = "translateY(-6px)";
-                    e.currentTarget.style.boxShadow = "0 10px 25px rgba(0,0,0,0.12)";
-                  }}
-                  onMouseLeave={(e) => {
-                    e.currentTarget.style.transform = "translateY(0)";
-                    e.currentTarget.style.boxShadow = "0 8px 20px rgba(0,0,0,0.08)";
-                  }}
+                  cover={
+                    <img
+                      src={item.thumbnail}
+                      alt={item.title}
+                      style={{
+                        height: 250,
+                        width: "100%",
+                        objectFit: "cover",
+                        borderTopLeftRadius: 12,
+                        borderTopRightRadius: 12,
+                      }}
+                    />
+                  }
                 >
-                  <Title level={5} style={{ marginBottom: 4 }}>
-                    {item.title}
-                  </Title>
-                  <Text type="secondary">{item.brand}</Text>
-                  <div style={{ display: "flex", alignItems: "center", margin: "8px 0" }}>
-                    <StarFilled style={{ color: "#faad14", marginRight: 4 }} />
-                    <Text>{item.rating}</Text>
-                  </div>
-                  <Paragraph style={{ fontSize: 14, color: "#666" }}>
-                    {item.description.slice(0, 65)}...
+                  <Title level={4}>{item.title}</Title>
+
+                  <Paragraph ellipsis={{ rows: 2 }}>
+                    {item.description}
                   </Paragraph>
-                  <div
-                    style={{
-                      display: "flex",
-                      justifyContent: "space-between",
-                      alignItems: "center",
-                      marginTop: 16,
-                    }}
-                  >
-                    <Text strong style={{ fontSize: 18, color: "#ff6b00" }}>
-                      ${item.price}
-                    </Text>
-                    <Button
-                      type="primary"
-                      shape="round"
-                      icon={<ShoppingCartOutlined />}
-                      size="middle"
-                    >
-                      Beli
-                    </Button>
+
+                  <div>
+                    <Tag color="blue">${item.price}</Tag>
+                    <Tag color="green">⭐ {item.rating}</Tag>
+                    <Tag color="purple">{item.category}</Tag>
                   </div>
                 </Card>
               </Col>
             ))}
-          </Row>
-        )}
+        </Row>
       </div>
     </ConfigProvider>
   );
